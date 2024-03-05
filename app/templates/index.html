@@ -4,10 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="../static/index.css">
 </head>
 <body>
-    <div class="container"></div>
-    <h1>APLICACIÓN CON FLASK</h1>
+    <div class="container">
+        <h1>LISTADO DE USUARIOS</h1>
+        <table class="table">
+            <tr>
+                <th>Codigo:</th>
+                <th>Nombre:</th>
+                <th>Apellido:</th>
+                <th>Email:</th>
+                <th>Dirección:</th>
+                <th>Celular:</th>
+                <th>Usuario:</th>
+            </tr>
+            <tbody>
+                {% for personas in personas %}
+                <tr>
+                    <td>{{personas[0]}}</td>
+                    <td>{{personas[1]}}</td>
+                    <td>{{personas[2]}}</td>
+                    <td>{{personas[3]}}</td>
+                    <td>{{personas[4]}}</td>
+                    <td>{{personas[5]}}</td>
+                    <td>{{personas[6]}}</td>
+                </tr>
+                {% endfor%}
+            </tbody>
+        </table>
+    </div>
+    
 </body>
 </html>
