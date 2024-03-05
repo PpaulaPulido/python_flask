@@ -18,6 +18,7 @@
                 <th>Dirección:</th>
                 <th>Celular:</th>
                 <th>Usuario:</th>
+                <th>Acciones:</th>
             </tr>
             <tbody>
                 {% for personas in personas %}
@@ -29,6 +30,13 @@
                     <td>{{personas[4]}}</td>
                     <td>{{personas[5]}}</td>
                     <td>{{personas[6]}}</td>
+                    <td>{{personas[7]}}</td>
+                    <td>
+                        <a href="{{url_for('editar_usuario', id = personas[0])}}">Editar</a>
+
+                        <a href="{{ url_for('eliminar_usuario', id=personas[0]) }}">Eliminar</a>
+
+                    </td>
                 </tr>
                 {% endfor%}
             </tbody>
