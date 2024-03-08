@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>editar</title>
-    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="stylesheet" href="{{url_for ('static', filename='../static/index.css')}}">
 </head>
 <body>
     <div class="titulo">
@@ -37,7 +37,7 @@
         </div>
         <div class="form">
             <label for="usuarioPer" name="usuario">Usuario: </label>
-            <input type="text" id="usuario" name="usuarioPer" value="{{personas[6]}}"  disabled>
+            <input type="text" id="usuario" name="usuarioPer" value="{{personas[6]}}">
         </div>
         <div class="form">
             <label for="contrasenaPer">Contraseña: </label>

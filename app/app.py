@@ -21,6 +21,10 @@ def lista():
     cursor.close()
     return render_template('index.html', personas = personas)
 
+@app.route('/usuario_existente')
+def usuario_existente():
+    return render_template('usuario_existente.html')
+
 @app.route('/registrar', methods = ['GET','POST'])
 def registrar_usuario():
     
@@ -32,15 +36,25 @@ def registrar_usuario():
         telefono = request.form.get('telefono')
         usuario = request.form.get('usuario')
         contrasena = request.form.get('contrasena')
-    
-        #insertar datos a la tabla
-        cursor.execute(
-            "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena)VALUES(%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasena))
-    
-        db.commit()
-        flash('usuario creado correctamente','success')
-        #redirigir a la misma pagina 
-        return redirect(url_for("registrar_usuario"))
+
+        #correo = 'SELECT * FROM personas WHERE email = %s'
+        cursor.execute('SELECT * FROM personas WHERE email = %s',(Email,))
+        resultado = cursor.fetchall()
+        print(resultado)
+
+        if len(resultado) > 0:
+            flash('El correo electrónico ya está registrado', 'error')
+            return redirect(url_for('usuario_existente'))
+
+        else:
+            print("no existe")
+            #insertar datos a la tabla
+            cursor.execute(
+                "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena)VALUES(%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasena))
+            db.commit()
+            flash('usuario creado correctamente','success')
+            #redirigir a la misma pagina 
+            return redirect(url_for("registrar_usuario"))
     return render_template('Registrar.html')
 
 @app.route('/editar/<int:id>',methods = ['POST','GET'])
@@ -77,10 +91,14 @@ def editar_usuario(id):
         
 
 
+
 @app.route('/eliminar/<int:id>',methods = ['GET'])
 def eliminar_usuario(id):
+    cursor = db.cursor()
+    if request.method == "GET":
+       cursor.execute('DELETE FROM personas WHERE id_persona=%s',(id,))
+       db.commit()
     return redirect(url_for("lista"))
-
 
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)
