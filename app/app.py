@@ -1,4 +1,5 @@
-from flask import Flask, request,render_template, redirect, url_for,flash
+from flask import Flask, request,render_template, redirect, url_for,flash,session
+import bcrypt
 import mysql.connector
 
 app = Flask (__name__)
@@ -11,6 +12,12 @@ db = mysql.connector.connect(
     database = 'agenda'
 )
 cursor = db.cursor()
+
+def encriptarContra(contrasenaEncrip):
+    #generar un hash de la contraseña 
+    encriptar = bcrypt.hashpw(contrasenaEncrip.encode('utf-8'),bcrypt.gensalt())
+
+    return encriptar
 
 #Para ejecutar
 @app.route('/')
@@ -25,6 +32,25 @@ def lista():
 def usuario_existente():
     return render_template('usuario_existente.html')
 
+@app.route('/login', methods = ['GET','POST'])
+def login():
+    if request.method == 'POST':
+        #VERIFIAR CREDENCIALES DEL USUARIO
+        username = request.form.get('txtcorreo')
+        password = request.form.get('txtcontrasena')
+        cursor = db.cursor()
+        cursor.execute('SELECT user_persona,contrasena FROM personas where user_persona = %s',(username,))
+        personas = cursor.fetchone()
+
+        if personas and bcrypt.check_password_hash(personas[7],password):
+            session['usuario'] = username
+            return redirect(url_for('lista'))
+        else:
+            error = 'credenciales invalidas. Por favor intertarlo de nuevo'
+            return render_template('sesion.html', error = error)
+    
+    return render_template('sesion.html')
+
 @app.route('/registrar', methods = ['GET','POST'])
 def registrar_usuario():
     
@@ -36,7 +62,7 @@ def registrar_usuario():
         telefono = request.form.get('telefono')
         usuario = request.form.get('usuario')
         contrasena = request.form.get('contrasena')
-
+        contrasenaEncriptada = encriptarContra(contrasena)
         #correo = 'SELECT * FROM personas WHERE email = %s'
         cursor.execute('SELECT * FROM personas WHERE email = %s',(Email,))
         resultado = cursor.fetchall()
@@ -50,7 +76,7 @@ def registrar_usuario():
             print("no existe")
             #insertar datos a la tabla
             cursor.execute(
-                "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena)VALUES(%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasena))
+                "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena)VALUES(%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasenaEncriptada))
             db.commit()
             flash('usuario creado correctamente','success')
             #redirigir a la misma pagina 
