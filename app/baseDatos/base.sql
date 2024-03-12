@@ -8,7 +8,7 @@ CREATE TABLE personas(
   direccion varchar(60),
   telefono int,
   user_persona varchar(60),
-  contrasena varchar(60)
+  contrasena varchar(255)
 );
 
 describe personas;

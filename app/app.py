@@ -1,9 +1,10 @@
 from flask import Flask, request,render_template, redirect, url_for,flash,session
+from werkzeug.security import generate_password_hash,check_password_hash
 import bcrypt
 import mysql.connector
 
 app = Flask (__name__)
-app.secret_key = 'clave_secreta'
+app.secret_key = '123456789'
 
 db = mysql.connector.connect(
     host = 'localhost',
@@ -13,11 +14,13 @@ db = mysql.connector.connect(
 )
 cursor = db.cursor()
 
+@app.route('/password/<contrasenaEncrip>')
 def encriptarContra(contrasenaEncrip):
     #generar un hash de la contraseña 
-    encriptar = bcrypt.hashpw(contrasenaEncrip.encode('utf-8'),bcrypt.gensalt())
-
-    return encriptar
+    #encriptar = bcrypt.hashpw(contrasenaEncrip.encode('utf-8'),bcrypt.gensalt())
+    encriptar = generate_password_hash(contrasenaEncrip)
+    valor = check_password_hash(encriptar,contrasenaEncrip)
+    return "Encriptado:{0} | coincide:{1}".format(encriptar,valor)
 
 #Para ejecutar
 @app.route('/')
@@ -39,17 +42,24 @@ def login():
         username = request.form.get('txtcorreo')
         password = request.form.get('txtcontrasena')
         cursor = db.cursor()
-        cursor.execute('SELECT user_persona,contrasena FROM personas where user_persona = %s',(username,))
-        personas = cursor.fetchone()
+        #cursor.execute('SELECT email,contrasena FROM personas where email = %s',(username,))
+        #resultado = cursor.fetchone()
 
-        if personas and bcrypt.check_password_hash(personas[7],password):
+        cursor.execute('SELECT * FROM personas WHERE email = %s ',(username,))
+        resultado = cursor.fetchone()
+        
+        if resultado and encriptarContra(password) == resultado[1]:
+            print("corecto")
             session['usuario'] = username
             return redirect(url_for('lista'))
         else:
-            error = 'credenciales invalidas. Por favor intertarlo de nuevo'
-            return render_template('sesion.html', error = error)
-    
+            print("error")
+            error = 'credenciales invalidas, por favor intentarlo de nuevo'
+            return render_template('sesion.html',error = error)
+
+
     return render_template('sesion.html')
+
 
 @app.route('/registrar', methods = ['GET','POST'])
 def registrar_usuario():
