@@ -20,7 +20,8 @@ def encriptarContra(contrasenaEncrip):
     #encriptar = bcrypt.hashpw(contrasenaEncrip.encode('utf-8'),bcrypt.gensalt())
     encriptar = generate_password_hash(contrasenaEncrip)
     valor = check_password_hash(encriptar,contrasenaEncrip)
-    return "Encriptado:{0} | coincide:{1}".format(encriptar,valor)
+    #return "Encriptado:{0} | coincide:{1}".format(encriptar,valor)
+    return valor
 
 #Para ejecutar
 @app.route('/')
@@ -35,32 +36,6 @@ def lista():
 def usuario_existente():
     return render_template('usuario_existente.html')
 
-@app.route('/login', methods = ['GET','POST'])
-def login():
-    if request.method == 'POST':
-        #VERIFIAR CREDENCIALES DEL USUARIO
-        username = request.form.get('txtcorreo')
-        password = request.form.get('txtcontrasena')
-        cursor = db.cursor()
-        #cursor.execute('SELECT email,contrasena FROM personas where email = %s',(username,))
-        #resultado = cursor.fetchone()
-
-        cursor.execute('SELECT * FROM personas WHERE email = %s ',(username,))
-        resultado = cursor.fetchone()
-        
-        if resultado and encriptarContra(password) == resultado[1]:
-            print("corecto")
-            session['usuario'] = username
-            return redirect(url_for('lista'))
-        else:
-            print("error")
-            error = 'credenciales invalidas, por favor intentarlo de nuevo'
-            return render_template('sesion.html',error = error)
-
-
-    return render_template('sesion.html')
-
-
 @app.route('/registrar', methods = ['GET','POST'])
 def registrar_usuario():
     
@@ -72,7 +47,8 @@ def registrar_usuario():
         telefono = request.form.get('telefono')
         usuario = request.form.get('usuario')
         contrasena = request.form.get('contrasena')
-        contrasenaEncriptada = encriptarContra(contrasena)
+
+        contrasenaEncriptada = generate_password_hash(contrasena)
         #correo = 'SELECT * FROM personas WHERE email = %s'
         cursor.execute('SELECT * FROM personas WHERE email = %s',(Email,))
         resultado = cursor.fetchall()
@@ -93,6 +69,40 @@ def registrar_usuario():
             return redirect(url_for("registrar_usuario"))
     return render_template('Registrar.html')
 
+#login del usuario
+@app.route('/login', methods = ['GET','POST'])
+def login():
+    if request.method == 'POST':
+        #VERIFIAR CREDENCIALES DEL USUARIO
+        username = request.form.get('txtcorreo')
+        password = request.form.get('txtcontrasena')
+        cursor = db.cursor()
+        #cursor.execute('SELECT email,contrasena FROM personas where email = %s',(username,))
+        #resultado = cursor.fetchone()
+
+        cursor.execute('SELECT email,contrasena FROM personas WHERE email = %s ',(username,))
+        resultado = cursor.fetchone()
+        
+        if resultado and   check_password_hash(resultado[1],password):
+            print("correcto")
+            session['usuario'] = username
+            return redirect(url_for('lista'))
+        else:
+            print("error")
+            error = 'credenciales invalidas, por favor intentarlo de nuevo'
+            return render_template('sesion.html',error = error)
+
+
+    return render_template('sesion.html')
+
+@app.route('/logout')
+def logout():
+    #eliminar el usuario de la sesión
+     session.pop('usuario',None)
+     print("La sesión se ha cerrado")
+     return redirect(url_for('login'))
+
+#editar usuario
 @app.route('/editar/<int:id>',methods = ['POST','GET'])
 def editar_usuario(id):
     cursor = db.cursor()
@@ -124,10 +134,8 @@ def editar_usuario(id):
         cursor.close()
         #el render tempalte re direcicona a un html
         return render_template('editar.html', personas = data[0])
-        
 
-
-
+#Eliminar usuario
 @app.route('/eliminar/<int:id>',methods = ['GET'])
 def eliminar_usuario(id):
     cursor = db.cursor()
@@ -135,6 +143,8 @@ def eliminar_usuario(id):
        cursor.execute('DELETE FROM personas WHERE id_persona=%s',(id,))
        db.commit()
     return redirect(url_for("lista"))
+
+
 
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)

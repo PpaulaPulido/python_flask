@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet"  href="{{url_for ('static', filename='../static/index.css')}}">
+    <link rel="stylesheet" href="{{url_for ('static', filename='../static/index.css')}}">
 </head>
+
 <body>
     <div class="container">
+        <h1>Bienvenido,{{session['usuario']}}</h1>
+        <p>Has iniciado sesión correctamente</p>
+        <a href="/logout">Cerrar sesión</a>
         <h1>LISTADO DE USUARIOS</h1>
         <table class="table">
             <tr>
@@ -18,7 +23,7 @@
                 <th>Dirección:</th>
                 <th>Celular:</th>
                 <th>Usuario:</th>
-                <th>Contraseña:</th>
+                <th class="contra">Contraseña:</th>
                 <th>Acciones:</th>
             </tr>
             <tbody>
@@ -30,8 +35,8 @@
                     <td>{{personas[3]}}</td>
                     <td>{{personas[4]}}</td>
                     <td>{{personas[5]}}</td>
-                    <td>{{personas[6]}}</td>
-                    <td>{{personas[7]}}</td>
+                    <td >{{personas[6]}}</td>
+                    <td class="contra">{{personas[7]}}</td>
                     <td class="botones">
                         <a href="{{url_for('editar_usuario', id = personas[0])}}">Editar</a><br>
 
@@ -42,7 +47,9 @@
                 {% endfor%}
             </tbody>
         </table>
+        <a href="{{ url_for('registrar_usuario')}}" class="agregar">Agregar Usuario</a>
     </div>
-    
+
 </body>
+
 </html>
