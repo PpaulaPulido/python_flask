@@ -2,6 +2,7 @@ from flask import Flask, request,render_template, redirect, url_for,flash,sessio
 from werkzeug.security import generate_password_hash,check_password_hash
 import bcrypt
 import mysql.connector
+import base64
 
 app = Flask (__name__)
 app.secret_key = '123456789'
@@ -145,6 +146,52 @@ def eliminar_usuario(id):
     return redirect(url_for("lista"))
 
 
+#codigo de canciones
+@app.route('/listaCanciones')
+def lista_canciones():
+    cursor = db.cursor()
+    #cursor.execute('SELECT * FROM canciones')
+    cursor.execute('SELECT id_can, titulo, artista, genero, precio, duracion, lanzamiento, img FROM canciones')
+    canciones = cursor.fetchall()
+    cursor.close()
+
+    lista_canciones = []
+
+    for cancion in canciones:
+        img_base64 = base64.b64encode(cancion[7]).decode('utf-8') if cancion[7] else None
+        print("Imagen Base64:", img_base64)  # Imprime el valor de la imagen codificada en Base64
+
+        cancion_dict = {
+            'id_can': cancion[0],
+            'titulo': cancion[1],
+            'artista': cancion[2],
+            'genero': cancion[3],
+            'precio': cancion[4],
+            'duracion': cancion[5],
+            'lanzamiento': cancion[6],
+            'img_base64': img_base64
+        }
+        
+        lista_canciones.append(cancion_dict)
+
+    return render_template('listCanciones.html', canciones = canciones)
+
+@app.route('/registrarCanciones', methods = ['GET','POST'])
+def registrar_cancion():
+    if request.method == 'POST':
+        titulo = request.form.get('titulo')
+        artista = request.form.get('artista')
+        genero = request.form.get('genero')
+        precio = request.form.get('precio')
+        duracion = request.form.get('duracion')
+        lanzamiento = request.form.get('lanzamiento')
+        imagen = request.files.get('img')
+
+        cursor.execute("INSERT INTO canciones(titulo,artista,genero,precio,duracion,lanzamiento,img)VALUES(%s,%s,%s,%s,%s,%s,%s)",(titulo,artista,genero,precio,duracion,lanzamiento,imagen))
+        db.commit()
+        print("cancion registrada exitosamente")
+        return redirect(url_for('registrar_cancion'))
+    return render_template('RegisCancion.html')
 
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)

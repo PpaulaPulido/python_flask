@@ -12,7 +12,7 @@ CREATE TABLE personas(
 );
 
 CREATE TABLE canciones(
-	id_can int auto_increment primary key,
+	  id_can int auto_increment primary key,
     titulo varchar(60) not null,
     artista varchar(60) not null,
     genero varchar(60) not null,

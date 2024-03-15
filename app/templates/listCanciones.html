@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canciones</title>
-    <link rel="stylesheet" href="{{url_for ('static', filename='../static/index.css')}}">
+    <link rel="stylesheet" href="{{url_for ('static', filename='../static/canciones.css')}}">
 </head>
 <body>
     <div class="container">
@@ -22,7 +22,18 @@
                 <th>Acciones</th>
             </tr>
             <tbody>
-                
+                {% for canciones in canciones %}
+                <tr>
+                    <td>{{canciones[0]}}</td>
+                    <td>{{canciones[1]}}</td>
+                    <td>{{canciones[2]}}</td>
+                    <td>{{canciones[3]}}</td>
+                    <td>{{canciones[4]}}</td>
+                    <td>{{canciones[5]}}</td>
+                    <td>{{canciones[6]}}</td>
+                    <td><img src="{{ canciones['img_base64'] }}" alt="Imagen de la canción"></td>
+                </tr>
+                {% endfor%}
             </tbody>
         </table>
     </div>
