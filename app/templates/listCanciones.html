@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canciones</title>
     <link rel="stylesheet" href="{{url_for ('static', filename='../static/canciones.css')}}">
+    <link rel="stylesheet" href="../static/canciones.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Bienvenido a la lista de canciones</h1>
@@ -32,10 +35,16 @@
                     <td>{{canciones[5]}}</td>
                     <td>{{canciones[6]}}</td>
                     <td><img src="{{ canciones['img_base64'] }}" alt="Imagen de la canción"></td>
+                    <td class="botones">
+                        <a href="{{url_for('editar_cancion', id = canciones[0])}}">Editar</a>
+                        <a href="{{ url_for('eliminar_cancion', id=canciones[0]) }}">Eliminar</a>
+                    </td>
                 </tr>
                 {% endfor%}
             </tbody>
         </table>
+        <a href="{{ url_for('registrar_cancion')}}" class="agregar">Agregar Usuario</a>
     </div>
 </body>
+
 </html>

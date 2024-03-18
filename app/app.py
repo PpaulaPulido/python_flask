@@ -145,7 +145,7 @@ def eliminar_usuario(id):
        db.commit()
     return redirect(url_for("lista"))
 
-
+#--------------------------------------------------------------------------
 #codigo de canciones
 @app.route('/listaCanciones')
 def lista_canciones():
@@ -193,6 +193,46 @@ def registrar_cancion():
         return redirect(url_for('registrar_cancion'))
     return render_template('RegisCancion.html')
 
+@app.route('/editar_cancion/<int:id>',methods = ['POST','GET'])
+def editar_cancion(id):
+    cursor = db.cursor()
+    if request.method == 'POST':
+        #el nombre dentro del get es tomado del formulario editar y debe ser diferente al formulario de registro
+        
+        tituloCan = request.form.get('tituloCan')
+        artistaCan = request.form.get('artistaCan')
+        generoCan = request.form.get('generoCan')
+        precioCan = request.form.get('precioCan')
+        duracionCan = request.form.get('duracionCan')
+        lanzamientoCan = request.form.get('lanzamientoCan')
+        imagenCan = request.files.get('imgCan')
+        #sentencia para actualizar los datos
+        #son las variables de la base de datos
+        sql = "UPDATE canciones SET titulo = %s, artista = %s, genero = %s, precio = %s, duracion = %s, lanzamiento = %s, img = %s WHERE id_can = %s"
+        cursor.execute(sql, (tituloCan,artistaCan,generoCan,precioCan,duracionCan,lanzamientoCan,imagenCan,id))
+
+        db.commit()
+        flash('Datos actualizados correctamente', 'success')
+        #retorna a una url}
+        return redirect(url_for("lista_canciones"))
+        
+    else:
+        #obtener los datos de la persona que se va editar
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM canciones WHERE id_can = %s',(id,))
+        data = cursor.fetchall()
+        cursor.close()
+        #el render tempalte re direcicona a un html
+        return render_template('editar_cancion.html', canciones = data[0])
+
+@app.route('/eliminar_cancion/<int:id>',methods = ['GET'])
+def eliminar_cancion(id):
+    cursor = db.cursor()
+    if request.method == "GET":
+       cursor.execute('DELETE FROM canciones WHERE id_can=%s',(id,))
+       db.commit()
+    return redirect(url_for("lista_canciones"))
+                    
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)
     app.run(debug = True, port=3000)

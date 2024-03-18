@@ -64,3 +64,49 @@ input[type="file"] {
 .form .button:hover{
     background-color: #b946fc;
 }
+/*estilos de lista de canciones*/
+.container{
+    padding: 50px;
+    margin: 50px ;
+    background-color: #012c8a;
+    color: #fff;
+}
+.container h1{
+    text-align: center;
+    margin: 50px 0;
+}
+.table{
+    border-collapse: collapse;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.table th, .table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+    text-align: center;
+}
+
+.table th {
+    background-color: #f2f2f2;
+    color: #000;
+    
+}
+
+.botones a{
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    margin: 20px 0;
+}
+.titulo_can{
+    color: #000;
+}
+.agregar{
+    color: #fff;
+    text-decoration: none;
+    font-size: 25px;
+    text-align: center;
+    margin: 20px 0;
+}
