@@ -48,7 +48,8 @@ def registrar_usuario():
         telefono = request.form.get('telefono')
         usuario = request.form.get('usuario')
         contrasena = request.form.get('contrasena')
-
+        roles = request.form.get('txtrol')
+        
         contrasenaEncriptada = generate_password_hash(contrasena)
         #correo = 'SELECT * FROM personas WHERE email = %s'
         cursor.execute('SELECT * FROM personas WHERE email = %s',(Email,))
@@ -63,7 +64,7 @@ def registrar_usuario():
             print("no existe")
             #insertar datos a la tabla
             cursor.execute(
-                "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena)VALUES(%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasenaEncriptada))
+                "INSERT INTO personas(nombre_persona,apellido_persona,email,direccion,telefono,user_persona,contrasena,roles)VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",(Nombres,Apellidos,Email,direccion,telefono,usuario,contrasenaEncriptada,roles))
             db.commit()
             flash('usuario creado correctamente','success')
             #redirigir a la misma pagina 
@@ -73,27 +74,30 @@ def registrar_usuario():
 #login del usuario
 @app.route('/login', methods = ['GET','POST'])
 def login():
+    
+    cursor = db.cursor(dictionary=True)
     if request.method == 'POST':
         #VERIFIAR CREDENCIALES DEL USUARIO
         username = request.form.get('txtcorreo')
         password = request.form.get('txtcontrasena')
-        cursor = db.cursor()
-        #cursor.execute('SELECT email,contrasena FROM personas where email = %s',(username,))
-        #resultado = cursor.fetchone()
-
-        cursor.execute('SELECT email,contrasena FROM personas WHERE email = %s ',(username,))
-        resultado = cursor.fetchone()
         
-        if resultado and   check_password_hash(resultado[1],password):
-            print("correcto")
-            session['usuario'] = username
-            return redirect(url_for('lista'))
+        sql = "SELECT email,contrasena,roles FROM personas WHERE  email = %s"
+        cursor.execute(sql,(username,))
+        user = cursor.fetchone()
+        
+        if user and check_password_hash(user['contrasena'], password):
+            session['usuario'] = user['email']
+            session['rol'] = user['roles']
+            
+            #de acuerdo al rol asignamos url
+            if user['roles'] == 'Administrador':
+                return redirect(url_for('lista'))
+            else:
+                return redirect(url_for('lista_canciones'))
         else:
-            print("error")
-            error = 'credenciales invalidas, por favor intentarlo de nuevo'
+            error = 'credenciales invalidas pro favor intentar de nuevo'
             return render_template('sesion.html',error = error)
-
-
+    
     return render_template('sesion.html')
 
 @app.route('/logout')

@@ -11,6 +11,8 @@ CREATE TABLE personas(
   contrasena varchar(255)
 );
 
+alter table personas add roles varchar(50);
+
 CREATE TABLE canciones(
 	  id_can int auto_increment primary key,
     titulo varchar(60) not null,
