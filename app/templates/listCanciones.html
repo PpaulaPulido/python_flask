@@ -25,25 +25,25 @@
                 <th>Acciones</th>
             </tr>
             <tbody>
-                {% for canciones in canciones %}
+                {% for cancion in canciones %}
                 <tr>
-                    <td>{{canciones[0]}}</td>
-                    <td>{{canciones[1]}}</td>
-                    <td>{{canciones[2]}}</td>
-                    <td>{{canciones[3]}}</td>
-                    <td>{{canciones[4]}}</td>
-                    <td>{{canciones[5]}}</td>
-                    <td>{{canciones[6]}}</td>
-                    <td><img src="{{ canciones['img_base64'] }}" alt="Imagen de la canción"></td>
+                    <td>{{cancion[0]}}</td>
+                    <td>{{cancion[1]}}</td>
+                    <td>{{cancion[2]}}</td>
+                    <td>{{cancion[3]}}</td>
+                    <td>{{cancion[4]}}</td>
+                    <td>{{cancion[5]}}</td>
+                    <td>{{cancion[6]}}</td>
+                    <td><img src="data:image/jpeg;base64,{{ cancion.imagen }}" width="100" alt="Imagen de la canción"></td>
                     <td class="botones">
-                        <a href="{{url_for('editar_cancion', id = canciones[0])}}">Editar</a>
-                        <a href="{{ url_for('eliminar_cancion', id=canciones[0]) }}">Eliminar</a>
+                        <a href="{{url_for('editar_cancion', id = cancion[0])}}">Editar</a>
+                        <a href="{{ url_for('eliminar_cancion', id=cancion[0]) }}">Eliminar</a>
                     </td>
                 </tr>
                 {% endfor%}
             </tbody>
         </table>
-        <a href="{{ url_for('registrar_cancion')}}" class="agregar">Agregar Usuario</a>
+        <a href="{{ url_for('registrar_cancion')}}" class="agregar">Agregar Canción</a>
     </div>
 </body>
 

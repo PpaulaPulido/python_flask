@@ -154,32 +154,30 @@ def eliminar_usuario(id):
 @app.route('/listaCanciones')
 def lista_canciones():
     cursor = db.cursor()
-    #cursor.execute('SELECT * FROM canciones')
-    cursor.execute('SELECT id_can, titulo, artista, genero, precio, duracion, lanzamiento, img FROM canciones')
+    cursor.execute('SELECT titulo,artista,genero,precio,duracion,lanzamiento,img FROM canciones')
     canciones = cursor.fetchall()
-    cursor.close()
 
-    lista_canciones = []
+    #lista para almacenar canciones
+    cancionesLista = []
+    if canciones:
+        for cancion in canciones:
+            #cinveritr la imagen en formato base 64
+            imagen = base64.b64encode(cancion[6]).decode('utf-8') if cancion[6] else None
+            #agregar los datos de la canciona  la lista
+            cancionesLista.append({
+                'titulo': cancion[0],
+                'artista': cancion[1],
+                'genero': cancion[2],
+                'precio':cancion[3],
+                'duracion': cancion[4],
+                'lanzamiento': cancion[5],
+                'imagen': imagen
+            })
 
-    for cancion in canciones:
-        img_base64 = base64.b64encode(cancion[7]).decode('utf-8') if cancion[7] else None
-        print("Imagen Base64:", img_base64)  # Imprime el valor de la imagen codificada en Base64
-
-        cancion_dict = {
-            'id_can': cancion[0],
-            'titulo': cancion[1],
-            'artista': cancion[2],
-            'genero': cancion[3],
-            'precio': cancion[4],
-            'duracion': cancion[5],
-            'lanzamiento': cancion[6],
-            'img_base64': img_base64
-        }
-        
-        lista_canciones.append(cancion_dict)
-
-    return render_template('listCanciones.html', canciones = canciones)
-
+            cursor.close()
+        return render_template('listCanciones.html', canciones = cancionesLista)
+    else:
+        return print("no se encuentra")
 @app.route('/registrarCanciones', methods = ['GET','POST'])
 def registrar_cancion():
     if request.method == 'POST':
@@ -189,10 +187,17 @@ def registrar_cancion():
         precio = request.form.get('precio')
         duracion = request.form.get('duracion')
         lanzamiento = request.form.get('lanzamiento')
-        imagen = request.files.get('img')
+        #obtengo la img del formulario
+        imagen = request.files['img']
+        #se lee los datos de la imagen
+        imagenblob = imagen.read()
 
-        cursor.execute("INSERT INTO canciones(titulo,artista,genero,precio,duracion,lanzamiento,img)VALUES(%s,%s,%s,%s,%s,%s,%s)",(titulo,artista,genero,precio,duracion,lanzamiento,imagen))
+        cursor = db.cursor()
+
+        cursor.execute("INSERT INTO canciones(titulo,artista,genero,precio,duracion,lanzamiento,img)VALUES(%s,%s,%s,%s,%s,%s,%s)",(titulo,artista,genero,precio,duracion,lanzamiento,imagenblob))
         db.commit()
+        cursor.close()
+        print(imagenblob)
         print("cancion registrada exitosamente")
         return redirect(url_for('registrar_cancion'))
     return render_template('RegisCancion.html')
