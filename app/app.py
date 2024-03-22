@@ -81,13 +81,14 @@ def login():
         username = request.form.get('txtcorreo')
         password = request.form.get('txtcontrasena')
         
-        sql = "SELECT email,contrasena,roles FROM personas WHERE  email = %s"
+        sql = "SELECT email,contrasena,roles,user_persona FROM personas WHERE  email = %s"
         cursor.execute(sql,(username,))
         user = cursor.fetchone()
         
         if user and check_password_hash(user['contrasena'], password):
-            session['usuario'] = user['email']
+            session['email'] = user['email']
             session['rol'] = user['roles']
+            
             
             #de acuerdo al rol asignamos url
             if user['roles'] == 'Administrador':
@@ -154,7 +155,7 @@ def eliminar_usuario(id):
 @app.route('/listaCanciones')
 def lista_canciones():
     cursor = db.cursor()
-    cursor.execute('SELECT titulo,artista,genero,precio,duracion,lanzamiento,img FROM canciones')
+    cursor.execute('SELECT id_can,titulo,artista,genero,precio,duracion,lanzamiento,img FROM canciones')
     canciones = cursor.fetchall()
 
     #lista para almacenar canciones
@@ -162,19 +163,20 @@ def lista_canciones():
     if canciones:
         for cancion in canciones:
             #cinveritr la imagen en formato base 64
-            imagen = base64.b64encode(cancion[6]).decode('utf-8') if cancion[6] else None
+            imagen = base64.b64encode(cancion[7]).decode('utf-8')  if cancion[7] else None
             #agregar los datos de la canciona  la lista
             cancionesLista.append({
-                'titulo': cancion[0],
-                'artista': cancion[1],
-                'genero': cancion[2],
-                'precio':cancion[3],
-                'duracion': cancion[4],
-                'lanzamiento': cancion[5],
-                'imagen': imagen
+
+                'id_can': cancion[0],
+                'titulo': cancion[1],
+                'artista': cancion[2],
+                'genero': cancion[3],
+                'precio': cancion[4],
+                'duracion': cancion[5],
+                'lanzamiento': cancion[6],
+                'imagenblob': imagen
             })
 
-            cursor.close()
         return render_template('listCanciones.html', canciones = cancionesLista)
     else:
         return print("no se encuentra")
@@ -214,11 +216,13 @@ def editar_cancion(id):
         precioCan = request.form.get('precioCan')
         duracionCan = request.form.get('duracionCan')
         lanzamientoCan = request.form.get('lanzamientoCan')
-        imagenCan = request.files.get('imgCan')
+        imagenCan = request.files['imgCan']
+        imagenblobCan = imagenCan.read()
+
         #sentencia para actualizar los datos
         #son las variables de la base de datos
         sql = "UPDATE canciones SET titulo = %s, artista = %s, genero = %s, precio = %s, duracion = %s, lanzamiento = %s, img = %s WHERE id_can = %s"
-        cursor.execute(sql, (tituloCan,artistaCan,generoCan,precioCan,duracionCan,lanzamientoCan,imagenCan,id))
+        cursor.execute(sql, (tituloCan,artistaCan,generoCan,precioCan,duracionCan,lanzamientoCan,imagenblobCan,id))
 
         db.commit()
         flash('Datos actualizados correctamente', 'success')

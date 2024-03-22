@@ -6,51 +6,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="{{url_for ('static', filename='../static/index.css')}}">
+    <link rel="stylesheet" href="../static/index.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Bienvenido,{{session['usuario']}}</h1>
-        <p>Has iniciado sesión correctamente</p>
-        <a href="/logout">Cerrar sesión</a>
-        <h1>LISTADO DE USUARIOS</h1>
-        <table class="table">
-            <tr>
-                <th>Codigo:</th>
-                <th>Nombre:</th>
-                <th>Apellido:</th>
-                <th>Email:</th>
-                <th>Dirección:</th>
-                <th>Celular:</th>
-                <th>Usuario:</th>
-                <th class="contra">Contraseña:</th>
-                <th>Rol:</th>
-                <th>Acciones:</th>
-            </tr>
-            <tbody>
-                {% for personas in personas %}
+    <header>
+        <nav>
+            <div class="nav">
+                <ul class="nav_list">
+                    <li><a href="{{ url_for('lista')}}">Inicio</a></li>
+                    <li><a href="{{ url_for('registrar_usuario')}}">Agregar Usuario</a></li>
+                    <li><a href="{{ url_for('registrar_cancion')}}">Agregar Canción</a></li>
+                    <li><a href="">Agregar Compra</a></li>
+                    <li><a href="{{ url_for('logout')}}">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <h1>Bienvenido,{{session['email']}}</h1>
+            <p>Has iniciado sesión correctamente</p>
+            <h2>LISTADO DE USUARIOS</h2>
+            
+            <table class="table">
                 <tr>
-                    <td>{{personas[0]}}</td>
-                    <td>{{personas[1]}}</td>
-                    <td>{{personas[2]}}</td>
-                    <td>{{personas[3]}}</td>
-                    <td>{{personas[4]}}</td>
-                    <td>{{personas[5]}}</td>
-                    <td >{{personas[6]}}</td>
-                    <td class="contra">{{personas[7]}}</td>
-                    <td>{{personas[8]}}</td>
-                    <td class="botones">
-                        <a href="{{url_for('editar_usuario', id = personas[0])}}">Editar</a><br>
-
-                        <a href="{{ url_for('eliminar_usuario', id=personas[0]) }}">Eliminar</a>
-
-                    </td>
+                    <th>Codigo:</th>
+                    <th>Nombre:</th>
+                    <th>Apellido:</th>
+                    <th>Email:</th>
+                    <th>Dirección:</th>
+                    <th>Celular:</th>
+                    <th>Usuario:</th>
+                    <th>Rol:</th>
+                    <th>Acciones:</th>
                 </tr>
-                {% endfor%}
-            </tbody>
-        </table>
-        <a href="{{ url_for('registrar_usuario')}}" class="agregar">Agregar Usuario</a>
-    </div>
+                <tbody>
+                    {% for personas in personas %}
+                    <tr>
+                        <td>{{personas[0]}}</td>
+                        <td>{{personas[1]}}</td>
+                        <td>{{personas[2]}}</td>
+                        <td>{{personas[3]}}</td>
+                        <td>{{personas[4]}}</td>
+                        <td>{{personas[5]}}</td>
+                        <td >{{personas[6]}}</td>
+                        <td>{{personas[8]}}</td>
+                        <td class="botones">
+                            
+                            <a href="{{url_for('editar_usuario', id = personas[0])}}">Editar</a><br>
+    
+                            <a href="{{ url_for('eliminar_usuario', id=personas[0])}}">Eliminar</a>
+    
+                        </td>
+                    </tr>
+                    {% endfor%}
+                </tbody>
+            </table>
+        </div>
+    </main>
 
 </body>
 

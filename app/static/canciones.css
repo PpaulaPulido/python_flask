@@ -3,7 +3,28 @@
     padding: 0;
     box-sizing: border-box;
 }
-
+a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+}
+.nav_canciones{
+    background-color: #01313f;
+    color: #fff;
+    height: 60px;
+}
+.canciones_nav{
+    display: flex;
+    justify-content: space-evenly;
+    list-style: none;
+}
+.canciones_nav li{
+    font-size: 20px;
+    margin: 20px;
+}
+.canciones_nav li a:hover{
+    border-bottom: 2px solid rgb(3, 181, 212);
+}
 .regis {
     background-image: url(https://png.pngtree.com/background/20230612/original/pngtree-music-notes-flowing-on-a-dark-background-picture-image_3176634.jpg);
     background-repeat: no-repeat;
@@ -68,7 +89,8 @@ input[type="file"] {
 .container{
     padding: 50px;
     margin: 50px ;
-    background-color: #012c8a;
+    background-color: rgb(3, 80, 94);
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
     color: #fff;
 }
 .container h1{
