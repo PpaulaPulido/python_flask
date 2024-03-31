@@ -1,6 +1,5 @@
 from flask import Flask, request,render_template, redirect, url_for,flash,session
 from werkzeug.security import generate_password_hash,check_password_hash
-import bcrypt
 import mysql.connector
 import base64
 
@@ -69,6 +68,7 @@ def registrar_usuario():
             flash('usuario creado correctamente','success')
             #redirigir a la misma pagina 
             return redirect(url_for("registrar_usuario"))
+        
     return render_template('Registrar.html')
 
 #login del usuario
@@ -81,7 +81,7 @@ def login():
         username = request.form.get('txtcorreo')
         password = request.form.get('txtcontrasena')
         
-        sql = "SELECT email,contrasena,roles,user_persona FROM personas WHERE  email = %s"
+        sql = "SELECT email,contrasena,roles FROM personas WHERE email = %s"
         cursor.execute(sql,(username,))
         user = cursor.fetchone()
         
@@ -96,9 +96,9 @@ def login():
             else:
                 return redirect(url_for('lista_canciones'))
         else:
-            error = 'credenciales invalidas pro favor intentar de nuevo'
+            error = 'credenciales invalidas por favor intentar de nuevo'
+            print("error")
             return render_template('sesion.html',error = error)
-    
     return render_template('sesion.html')
 
 @app.route('/logout')
@@ -179,7 +179,9 @@ def lista_canciones():
 
         return render_template('listCanciones.html', canciones = cancionesLista)
     else:
-        return print("no se encuentra")
+        print("no se encuentra")
+        return render_template('listCanciones.html')
+    
 @app.route('/registrarCanciones', methods = ['GET','POST'])
 def registrar_cancion():
     if request.method == 'POST':
@@ -218,7 +220,8 @@ def editar_cancion(id):
         lanzamientoCan = request.form.get('lanzamientoCan')
         imagenCan = request.files['imgCan']
         imagenblobCan = imagenCan.read()
-
+        
+        cursor = db.cursor()
         #sentencia para actualizar los datos
         #son las variables de la base de datos
         sql = "UPDATE canciones SET titulo = %s, artista = %s, genero = %s, precio = %s, duracion = %s, lanzamiento = %s, img = %s WHERE id_can = %s"
@@ -237,6 +240,7 @@ def editar_cancion(id):
         cursor.close()
         #el render tempalte re direcicona a un html
         return render_template('editar_cancion.html', canciones = data[0])
+    
 
 @app.route('/eliminar_cancion/<int:id>',methods = ['GET'])
 def eliminar_cancion(id):
