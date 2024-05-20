@@ -93,11 +93,13 @@ def login():
             #de acuerdo al rol asignamos url
             if user['roles'] == 'Administrador':
                 return redirect(url_for('lista'))
+            elif user['roles'] == 'Commprador':
+                return redirect(url_for('lista_cancionesComprador'))
             else:
-                return redirect(url_for('lista_canciones'))
+                return redirect(url_for('lista_cancionesComprador'))
         else:
             error = 'credenciales invalidas por favor intentar de nuevo'
-            print("error")
+            print(error)
             return render_template('sesion.html',error = error)
     return render_template('sesion.html')
 
@@ -249,6 +251,38 @@ def eliminar_cancion(id):
        cursor.execute('DELETE FROM canciones WHERE id_can=%s',(id,))
        db.commit()
     return redirect(url_for("lista_canciones"))
+
+
+#**************************Lista de canciones de l comprador***************************
+@app.route('/listaCancionesCom')
+def lista_cancionesComprador():
+    cursor = db.cursor()
+    cursor.execute('SELECT id_can,titulo,artista,genero,precio,duracion,lanzamiento,img FROM canciones')
+    canciones = cursor.fetchall()
+
+    #lista para almacenar canciones
+    cancionesLista = []
+    if canciones:
+        for cancion in canciones:
+            #cinveritr la imagen en formato base 64
+            imagen = base64.b64encode(cancion[7]).decode('utf-8')  if cancion[7] else None
+            #agregar los datos de la canciona  la lista
+            cancionesLista.append({
+
+                'id_can': cancion[0],
+                'titulo': cancion[1],
+                'artista': cancion[2],
+                'genero': cancion[3],
+                'precio': cancion[4],
+                'duracion': cancion[5],
+                'lanzamiento': cancion[6],
+                'imagenblob': imagen
+            })
+
+        return render_template('cancionesComprador.html', canciones = cancionesLista)
+    else:
+        print("no se encuentra")
+        return render_template('cancionesComprador.html')
                     
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)
