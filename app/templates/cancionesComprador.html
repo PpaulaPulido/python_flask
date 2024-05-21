@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{url_for ('static', filename='../static/canciones.css')}}">
     <link rel="stylesheet" href="../static/canciones.css">
 
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kit.fontawesome.com/ea06c7c0f7.js" crossorigin="anonymous"></script>
 </head>
 
@@ -17,8 +17,8 @@
         <nav>
             <div class="nav_canciones">
                 <ul class="canciones_nav">
-                    <li><a href="#">Inicio</a></li>
-                    <li><a href= "#" ><i class="fa-solid fa-cart-shopping"></i></a></li>
+                    <li><a href="{{url_for('lista_cancionesComprador')}}">Inicio</a></li>
+                    <li><a href= "{{url_for('ver_carito')}}" ><i class="fa-solid fa-cart-shopping"></i></a></li>
                     <li><a href="{{ url_for('logout')}}">Cerrar sesión</a></li>
                 </ul>
             </div>
@@ -50,8 +50,8 @@
                         <td>{{ cancion.duracion }}</td>
                         <td>{{ cancion.lanzamiento }}</td>
                         <td class="botones">
-                            <a href="#">Añadir al <i class="fa-solid fa-cart-shopping"></i></a><br>
-                            <a href="#">Eliminar del  <i class="fa-solid fa-cart-shopping"></i></a><br>
+                            <a href="#" data-id = "{{cancion.id_can}}" data-titulo = "{{cancion.titulo}}" data-precio = "{{cancion.precio}}" class="agregarCan">Añadir al <i class="fa-solid fa-cart-shopping"></i></a><br>
+                        
                         </td>
                     </tr>
                     {% endfor %}
@@ -61,6 +61,8 @@
         </div>
     </main>
     
+    <script src = "../static/js/carrito.js"></script>
+
 </body>
 
 </html>
