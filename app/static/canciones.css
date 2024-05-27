@@ -172,7 +172,7 @@ input[type="file"] {
     border-radius: 10px;
     text-align: center;
 }
-.deleteAll{
+.botonCar{
     background-color: #0299c7;
     color: #fff;
     padding: 10px 15px;
@@ -181,4 +181,5 @@ input[type="file"] {
     font-weight: 700;
     border-radius: 10px;
     cursor: pointer;
+    margin: 0 20px;
 }

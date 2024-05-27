@@ -73,7 +73,7 @@ def registrar_usuario():
             db.commit()
             flash('usuario creado correctamente','success')
             #redirigir a la misma pagina 
-            return redirect(url_for("registrar_usuario"))
+            return redirect(url_for("lista"))
         
     return render_template('Registrar.html')
 

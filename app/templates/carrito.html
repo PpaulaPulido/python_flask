@@ -21,7 +21,11 @@
       <nav>
         <div class="nav_canciones">
           <ul class="canciones_nav">
-            <li><a href="{{url_for('lista_cancionesComprador')}}">Realizar compra</a></li>
+            <li>
+              <a href="{{url_for('lista_cancionesComprador')}}"
+                >Realizar compra</a
+              >
+            </li>
             <li><a href="{{ url_for('logout')}}">Cerrar sesión</a></li>
           </ul>
         </div>
@@ -41,7 +45,8 @@
         <div class="CONTENEDOR">
           <div class="totalContainer">
             <h3 class="total">Total: ${{ total }}</h3>
-            <button class="deleteAll ">Eliminar todo</button>
+            <button class="deleteAll botonCar">Eliminar todo</button>
+            <button class="botonCar">Comprar</button>
           </div>
         </div>
       </div>
