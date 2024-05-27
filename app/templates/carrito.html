@@ -1,36 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="{{url_for ('static', filename='../static/canciones.css')}}">
-    <link rel="stylesheet" href="../static/canciones.css">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{url_for ('static', filename='../static/canciones.css')}}"
+    />
+    <link rel="stylesheet" href="../static/canciones.css" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/ea06c7c0f7.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
     <header>
-        <nav>
-            <div class="nav_canciones">
-                <ul class="canciones_nav">
-                    <li><a href="{{url_for('lista_cancionesComprador')}}">Inicio</a></li>
-                    <li><a href= "#" >Realizar compra</a></li>
-                    <li><a href="{{ url_for('logout')}}">Cerrar sesión</a></li>
-                </ul>
-            </div>
-        </nav>
+      <nav>
+        <div class="nav_canciones">
+          <ul class="canciones_nav">
+            <li><a href="{{url_for('lista_cancionesComprador')}}">Realizar compra</a></li>
+            <li><a href="{{ url_for('logout')}}">Cerrar sesión</a></li>
+          </ul>
+        </div>
+      </nav>
     </header>
     <main>
-        <h1>Carrito de compras</h1>
-        <div id="container">
-            {% for item in carro %}
-            <div class="cart-item">
-                <h2>{{item.titulo}}</h2>
-                <p>{{item.precio}}</p>
-            </div>
-
-            {% endfor %}
-            <h3>Total: ${{total}}</h3>
+      <h1 class="titleCar">Carrito de compras</h1>
+      <div id="container">
+        {% for item in carro %}
+        <div class="cart-item" data-id="{{ item.id }}">
+          <h2>{{item.titulo}}</h2>
+          <p>{{item.precio}}</p>
+          <i class="fa-solid fa-trash delete-icon" data-id="{{ item.id }}"></i>
         </div>
+
+        {% endfor %}
+        <div class="CONTENEDOR">
+          <div class="totalContainer">
+            <h3 class="total">Total: ${{ total }}</h3>
+            <button class="deleteAll ">Eliminar todo</button>
+          </div>
+        </div>
+      </div>
     </main>
-</body>
+    <script src="../static/js/carrito.js"></script>
+  </body>
 </html>

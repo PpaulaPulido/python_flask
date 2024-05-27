@@ -2,9 +2,14 @@ from flask import Flask, request,render_template, redirect, url_for,flash,sessio
 from werkzeug.security import generate_password_hash,check_password_hash
 import mysql.connector
 import base64
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask (__name__)
 app.secret_key = '123456789'
+
+UPLOAD_FOLDER = 'uploads'  # Carpeta donde se guardarán las imágenes
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = mysql.connector.connect(
     host = 'localhost',
@@ -13,6 +18,7 @@ db = mysql.connector.connect(
     database = 'agenda'
 )
 cursor = db.cursor()
+
 
 @app.route('/password/<contrasenaEncrip>')
 def encriptarContra(contrasenaEncrip):
@@ -205,7 +211,7 @@ def registrar_cancion():
         cursor.close()
         print(imagenblob)
         print("cancion registrada exitosamente")
-        return redirect(url_for('registrar_cancion'))
+        return redirect(url_for('lista_canciones'))
     return render_template('RegisCancion.html')
 
 @app.route('/editar_cancion/<int:id>',methods = ['POST','GET'])
@@ -290,10 +296,8 @@ def adicionar_carito():
     titulocan = request.form['titulocan']
     precioCan = request.form['preciocan']
 
-    if 'cart' not in session:
-        session['cart'] = []
-
-    session['cart'].append({'id':idcan,'titulo':titulocan,'precio':float(precioCan) })
+    # Agregar la información de la canción al carrito
+    session['cart'].append({'id': idcan, 'titulo': titulocan, 'precio': float(precioCan)})
     session.modified = True
 
     print('cancion agregada al carrito', session['cart'])
@@ -305,7 +309,31 @@ def ver_carito():
     total = sum(item['precio'] for item in carro)
 
     return render_template('carrito.html',carro = carro, total = total)
-                  
+
+@app.route('/eliminar-del-carro', methods=['POST'])
+def eliminar_del_carro():
+    idcan = request.form.get('idcan')
+
+    if idcan:
+        # Obtener el carrito de la sesión
+        carro = session.get('cart', [])
+
+        # Buscar el primer elemento con el ID especificado y eliminarlo
+        for item in carro:
+            if item['id'] == idcan:
+                carro.remove(item)
+                break
+
+        # Guardar el carrito actualizado en la sesión
+        session['cart'] = carro
+        session.modified = True
+        return jsonify({'message': 'Canción eliminada del carro.'})
+    
+    else:
+        session['cart'] = []
+        session.modified = True;
+        return jsonify({'message': 'Canciones eliminadas del carro.'})
+    
 if __name__ == '__main__':
     app.add_url_rule('/', view_func=lista)
     app.run(debug = True, port=3000)
