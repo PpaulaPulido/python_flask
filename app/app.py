@@ -292,6 +292,10 @@ def lista_cancionesComprador():
 
 @app.route('/Adicionarcarrito', methods = ['GET','POST'])
 def adicionar_carito():
+
+    if 'cart' not in session:
+        session['cart'] = []
+        
     idcan = request.form['idcan']
     titulocan = request.form['titulocan']
     precioCan = request.form['preciocan']
@@ -331,7 +335,7 @@ def eliminar_del_carro():
     
     else:
         session['cart'] = []
-        session.modified = True;
+        session.modified = True
         return jsonify({'message': 'Canciones eliminadas del carro.'})
     
 if __name__ == '__main__':
